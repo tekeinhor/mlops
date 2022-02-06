@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/tekeinhor/Documents/tati/code/adevinta/mlruns/0/fd6986f2b8104c81bad25bceb61f3492/artifacts
+end_time: 1644172573560
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: fd6986f2b8104c81bad25bceb61f3492
+run_uuid: fd6986f2b8104c81bad25bceb61f3492
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1644172570821
+status: 3
+tags: []
+user_id: tekeinhor
