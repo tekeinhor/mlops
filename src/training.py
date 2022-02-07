@@ -1,13 +1,16 @@
 import logging
 import pandas as pd
+import sys
+from pathlib import Path
+import joblib
+import coloredlogs
 from typing import Any
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import recall_score, precision_score, f1_score, accuracy_score
 import mlflow
 import mlflow.sklearn
-import joblib
-import coloredlogs
+
 import src.config as config
 from urllib.parse import urlparse
 coloredlogs.install(level='INFO', fmt='%(asctime)s,%(msecs)03d:(%(levelname)s): %(message)s')
@@ -77,17 +80,25 @@ def evaluation_metrics(actual, prediction):
 
 
 def save_encoder(ohe: OneHotEncoder, output: str):
-    joblib.dump(ohe, output)
+    path = Path(output)
+    # create parent folder if it doesn't exist
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        joblib.dump(ohe, output)
+    except FileNotFoundError as e:
+        logger.exception("Invalid destination for encoder: %s", e)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
     with mlflow.start_run(run_name="KNN_TRAINING_RUN"):
+        undersampling = False
         logger.info("start model training...")
 
         logger.info("Prepare train/test data")
         # prepare dataset
         ohe = OneHotEncoder(handle_unknown='ignore')
-        X_train, y_train = prepare_train(ohe, config.train_dataset_path)
+        X_train, y_train = prepare_train(ohe, config.train_dataset_path, undersampling)
         X_test, y_test = prepare_test(ohe, config.test_dataset_path)
         save_encoder(ohe, config.ohe_features_path)
 
