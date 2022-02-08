@@ -60,7 +60,7 @@ PS : Warning !!! If you are using a virtual env, make sure to run your notebook 
 
 
 ## Training
-The training is made by running the following code. [Mlflow](https://mlflow.org/) is used for model tracking.
+The training is made by running the following code. [Mlflow](https://mlflow.org/) is used for model tracking. It was use to ease model tracking for large scale experiment and to provide a model registry.
 ```bash
 # make sure you are in the working directory (/adevinta) and run:
 python -m src.training
@@ -78,10 +78,11 @@ $  mlflow ui
 ## Prediction
 
 ### Prediction through python
+Make sure that you've perform a train first.
 ```bash
 # make sure you are in the working directory (/adevinta) and run to do a prediction
-# use --data to pass the input csv file, --output for the output csv --use-latest
-$ python -m src.cli --data "data/test.csv" --output "output.csv" --latest
+# use --data to pass the input csv file, --latest to use the latest train model
+$ python -m src.cli --data "data/test.csv" --latest
 ```
 ### Prediction through docker
 
@@ -93,8 +94,9 @@ If you have docker installed you can rather use it (or instructions for installa
 # build your docker
 $ docker build -t <your_tag> .
 
-# run your docker
-$ docker run  <your_tag> --data "data/test.csv" --output "output.csv" --latest
+# in order to prediction using the docker you need to train your model first and pass to prediction cli (1- path to model, 2- path to encoder)
+# considering that you have your data (test.csv, artifacts/model, one_hot_encoder.joblib) inside a /data folder, then do
+$ docker run -v $(pwd)/data:/data <your_tag> --data /data/test.csv  --output /data/output.csv --model /data/artifacts/model --encoder /data/one_hot_encoder.joblib --no-latest
 ```
 
 
