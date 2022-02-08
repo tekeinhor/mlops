@@ -15,14 +15,16 @@ This project is done with [python 3.10](https://www.python.org/downloads/).
 This project contains the following files:
 
 ```bash
+├── .gitignore # a .gitignore file
 ├── Dockerfile # dockerfile for prediction
 ├── data # .csv files for train and test
 ├── docs # going further discussion
-├── features # stored encoder
-├── mlruns # stored model using mlflow pkg
+├── features # folder to store encoder
+├── mlruns # will be created to store model using mlflow pkg (when running train.py)
 ├── notebooks # exploration notebooks
 ├── readme.md # this file
 ├── requirements.txt #list of required package to make this code works
+├── environment.yml #list of required package to make this code works (for conda)
 ├── src # main source code
 ├── testdata # data necessary for test
 └── tests # test code
@@ -53,7 +55,11 @@ $ conda deactivate
 Please follow the guide the official [guide](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) for more info.
 
 ### Notebooks
-This project is delivered with two notebooks to illustrate the exploration phase of the work.
+This project is delivered with three notebooks to illustrate the exploration phase of the work.
+
+- EDA : for a little exploratory data analysis
+- Threshold-moving: for experimentation around threshold finding. Where we recommand a threshold of `0.333` when training is done without undersampling.
+- Modeling: where we explore a sampling technique.
 
 PS : Warning !!! If you are using a virtual env, make sure to run your notebook with the appropriate kernel. [For more info](https://stackoverflow.com/questions/53004311/how-to-add-conda-environment-to-jupyter-lab).
 
