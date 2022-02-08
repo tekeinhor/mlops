@@ -1,6 +1,6 @@
 # Going further
 
-Here are some elements where we could have gone further.
+Here are some points where we could have gone further.
 ## Software Eng Improvements
 - Dockerize training: packaging the training in docker
 - Register a database to MLFlow .
