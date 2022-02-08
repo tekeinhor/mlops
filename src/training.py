@@ -1,4 +1,6 @@
+#!/usr/bin/env python
 import logging
+import argparse
 import pandas as pd
 import sys
 from pathlib import Path
@@ -91,14 +93,20 @@ def save_encoder(ohe: OneHotEncoder, output: str):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="This command line allows you traing a Knn model\
+                                    with or without undersampling")
+    parser.add_argument('--undersampling', dest='undersampling', action='store_true',
+                        help='apply undersampling before training')
+    parser.set_defaults(undersampling=False)
+    args = parser.parse_args()
+    
     with mlflow.start_run(run_name="KNN_TRAINING_RUN"):
-        undersampling = False
-        logger.info("start model training...")
+        logger.info("start model training with undersampling=%s", args.undersampling)
 
         logger.info("Prepare train/test data")
         # prepare dataset
         ohe = OneHotEncoder(handle_unknown='ignore')
-        X_train, y_train = prepare_train(ohe, config.train_dataset_path, undersampling)
+        X_train, y_train = prepare_train(ohe, config.train_dataset_path, args.undersampling)
         X_test, y_test = prepare_test(ohe, config.test_dataset_path)
         save_encoder(ohe, config.ohe_features_path)
 
@@ -124,7 +132,7 @@ if __name__ == "__main__":
 
         run_id = mlflow.active_run().info.run_id
         artifact_path = "model"
-        model_name = "knn_n_5_for_undersampled_dataset"
+        model_name = f"knn_n_5_for_undersampling={args.undersampling}"
 
         model_uri = f"runs:/{run_id}/{artifact_path}"
 

@@ -13,10 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_latest_model_dir(dirpath: str) -> Path:
-    print("toto")
     p = Path(dirpath)
-    print("tata")
-    print(p.iterdir())
     try:
         paths = [x for x in p.iterdir() if x.is_dir()]
     except Exception as e:
@@ -48,13 +45,14 @@ parser.add_argument('--data', help='path to .csv input file to make prediction f
                     dest="data", required=True)
 parser.add_argument('--output', help='path to .csv where the result will be store',
                     dest="output", default="output.csv")
-parser.add_argument('--latest', dest='latest', action='store_true', help='use latest model stored')
-parser.add_argument('--no-latest', dest='latest', action='store_false', help='do not use latest model stored')
-parser.set_defaults(latest=True)
+parser.add_argument('--encoder', help='path to .joblib containing the encoder',
+                    dest="encoder", default=config.ohe_features_path)
+parser.add_argument('--latest', dest='latest', action='store_true', help='do not use latest model stored')
+parser.set_defaults(latest=False)
 args = parser.parse_args()
 
 
-logging.info("Making prediction for %s with %s", args.data, args.model)
+logging.info("Making prediction for %s with %s - latest=%s", args.data, args.model, args.latest)
 try:
     logging.info("Reading file at: %s", args.data)
     input_df = pd.read_csv(args.data)
@@ -66,7 +64,7 @@ original_df = input_df.copy()
 
 try:
     input_df.drop("UserId", axis=1, inplace=True)
-    ohe = joblib.load(config.ohe_features_path)
+    ohe = joblib.load(args.encoder)
     logging.info("Featurization of input data")
     X = ohe.transform(input_df).toarray()
 except FileNotFoundError:
@@ -79,15 +77,16 @@ try:
     if args.latest:
         latest_model = get_latest_model_dir(config.model_dir_path)
         model_uri = f"{latest_model}/artifacts/model"
+        logging.info("Looking for model at: %s", model_uri)
         y = make_prediction(X, model_uri)
     else:
-        print(args.model)
+        logging.info("Looking for model at: %s", args.model)
         if (args.model is None or args.model == ""):
-            logging.error("Please provide a model directory")
+            logging.error("Unable to perfom prediction: no model provided")
             sys.exit(1)
         else:
             y = make_prediction(X, args.model)
-   
+  
 except (IOError, ValueError) as e:
     logging.error("Invalid model path: %s", e)
     sys.exit(1)
