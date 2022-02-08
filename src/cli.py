@@ -68,7 +68,7 @@ try:
     logging.info("Featurization of input data")
     X = ohe.transform(input_df).toarray()
 except FileNotFoundError:
-    logging.error("Please specify a valid file path for the encoder")
+    logging.error("Please specify a valid file path for the encoder (have u performed a train?)")
     sys.exit(1)
 
 logging.info("Making prediction")
