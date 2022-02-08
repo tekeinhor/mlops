@@ -1,4 +1,4 @@
-FROM python:3.10-slim-buster
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 
 
 # Dependencies
@@ -10,5 +10,6 @@ RUN pip install -r /tmp/requirements.txt
 
 # Copy application at the right place
 COPY src /src
+ENV PYTHONPATH=/
 
-ENTRYPOINT ["python", "src/cli.py"]
+ENTRYPOINT ["python", "/src/cli.py"]
