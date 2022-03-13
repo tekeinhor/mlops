@@ -1,0 +1,6 @@
+MODEL_DIR="mlruns/0"
+ENCODER_PATH="features/one_hot_encoder.joblib"
+DEFAULT_OUTPUT="output.csv"
+
+[MLFLOW]
+TRACKING_URI="http://localhost:5000"
