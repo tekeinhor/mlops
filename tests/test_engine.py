@@ -1,9 +1,14 @@
-from src.predict import make_prediction
-import numpy as np
 import os
+from src.config import settings
+from src.engine import Engine
+import numpy as np
 import pytest
+import mlflow
 CurrentWorkingDir = os.getcwd()
 test_model_path = "testdata/mlruns/0/fd6986f2b8104c81bad25bceb61f3492/artifacts/model"
+
+
+engine = Engine(settings.ENCODER_PATH, settings.MLFLOW.TRACKING_URI)
 
 
 @pytest.mark.parametrize(
@@ -16,9 +21,9 @@ test_model_path = "testdata/mlruns/0/fd6986f2b8104c81bad25bceb61f3492/artifacts/
         "normal",
     ],
 )
-def test_make_prediction(X_list, model_uri, expected_y):
+def test_predict(X_list, model_uri, expected_y):
     X = np.array(X_list)
-    actual_y = make_prediction(X, model_uri)
+    actual_y = engine.predict(X, model_uri)
     assert len(expected_y) == len(actual_y)
 
 
@@ -26,11 +31,11 @@ def test_make_prediction(X_list, model_uri, expected_y):
     "X_list, model_uri, error",
     [
         ([[0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0],  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]],
-            "", ValueError),
+            "",  mlflow.exceptions.MlflowException),
         ([[0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0],  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]],
-            "toto", SystemExit),
+            "toto", OSError),
         ([[0, 1, 0, 0, 0, 0, 0, 0, 0, 1],  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0]],
-            "toto", SystemExit),
+            "toto", OSError),
     ],
     ids=[
         "empty model path",
@@ -38,7 +43,7 @@ def test_make_prediction(X_list, model_uri, expected_y):
         "incorrect feature size",
     ],
 )
-def test_make_prediction_error_cases(X_list, model_uri, error):
+def test_predict_error_cases(X_list, model_uri, error):
     X = np.array(X_list)
     with pytest.raises(error):
-        _ = make_prediction(X, model_uri)
+        _ = engine.predict(X, model_uri)
