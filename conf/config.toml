@@ -1,4 +1,4 @@
-MODEL_DIR="mlruns/0"
+MODEL_DIR="mlruns/"
 ENCODER_PATH="features/one_hot_encoder.joblib"
 DEFAULT_OUTPUT="output.csv"
 
