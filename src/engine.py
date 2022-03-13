@@ -97,16 +97,21 @@ class Engine:
         return recall_score(actual, prediction), precision_score(actual, prediction),\
            f1_score(actual, prediction), accuracy_score(actual, prediction)
 
-    def predict(self, data: pd.DataFrame, model_name: str, model_version: str):
+    def featurize(self, data: pd.DataFrame):
         # featurize
         data.drop("UserId", axis=1, inplace=True)
 
         # load encoder
-        ohe = joblib.load(self.encoder_path)
-        X = ohe.transform(data).toarray()
-
         try:
-            model = mlflow.sklearn.load_model(model_uri=f"models:/{model_name}/{model_version}")
+            ohe = joblib.load(self.encoder_path)
+        except Exception as e:
+            logger.exception("Unable to featurize data, please check your encoder: %s", e)
+            raise e
+        return ohe.transform(data).toarray()
+
+    def predict(self, X, model_uri: str):
+        try:
+            model = mlflow.sklearn.load_model(model_uri=model_uri)
         except Exception as e:
             logger.exception("Unable to load model, please check your model info: %s", e)
             raise e

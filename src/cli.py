@@ -49,7 +49,9 @@ def predict(data: str, name: str, version: str, output: str):
 
     # perform prediction
     try:
-        y = engine.predict(input_df, name, version)
+        model_uri = f"models:/{name}/{version}"
+        X = engine.featurize(input_df)
+        y = engine.predict(X, model_uri)
     except Exception as e:
         logger.error("Unable to perform prediction model: %s", e)
         sys.exit(1)
@@ -90,6 +92,7 @@ def train(trainset: str, testset: str, sampling: bool):
 
 @cli.command()
 def list_models():
+    """List registered model available for prediction."""
     engine = Engine(settings.ENCODER_PATH, settings.MLFLOW.TRACKING_URI)
     if click.confirm('Do you know the model name ?'):
         model_name = click.prompt('Please enter the model name', type=str)
