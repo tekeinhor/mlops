@@ -26,7 +26,7 @@ class Engine:
     def train(self, x_train, y_train, x_test, y_test):
         MODEL_NAME = 'KNN'  # Add your model name here. Example: clinical_ner
         EXPERIMENT_NAME = 'testing-mlflow'  # Add your experiment name here. Example: testing_dropout
-        n_neighbors = 5
+        n_neighbors = 3
 
         EXPERIMENT_ID = mlflow.create_experiment(f"{MODEL_NAME}_{EXPERIMENT_NAME}_N={n_neighbors}_{datetime.now()}")
         with mlflow.start_run(experiment_id=EXPERIMENT_ID) as run:
