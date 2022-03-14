@@ -138,8 +138,10 @@ $ mlflow server --backend-store-uri sqlite:///db/<database-name>.db --default-ar
 $ docker pull tnte/mlflow-tracking-server
 
 $  docker run -p 5000:5000 -v /db --env BUCKET_URI_OR_LOCAL_PATH="mlruns/" --env  BACKEND_STORE_URI="sqlite:///db/<database-name>.db" tnte/mlflow-tracking-server
-$ 
 ```
+
+The server is accessible at http://localhost:5000.
+
 3. run cli.py
 The cli has tree options: train, predict and list-models.
 ```bash
